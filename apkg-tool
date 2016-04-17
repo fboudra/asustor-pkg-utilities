@@ -1,0 +1,4 @@
+#!/bin/sh
+# apkg-tool - wrapper for Asustor apkg-tools.py
+
+fakeroot apkg-tools.py $@
