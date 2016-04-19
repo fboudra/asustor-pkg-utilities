@@ -1,0 +1,34 @@
+#!/bin/sh
+# asustor-build-env - Setup a cross build environment for ADM apps
+
+export ARCH=${ARCH:-x86_64}
+export tcbindir=${tcbindir:-"${HOME}/asustor-toolchain/${ARCH}-asustor-linux-gnu/bin"}
+export SYSROOT=${SYSROOT:-"${HOME}/asustor-toolchain/${ARCH}-asustor-linux-gnu/${ARCH}-asustor-linux-gnu/sysroot"}
+
+if [ "${ARCH}" = "arm" ]; then
+  compiler_prefix="arm-marvell-linux-gnueabi-"
+elif [ "${ARCH}" = "i686" ]; then
+  compiler_prefix="i686-asustor-linux-gnu-"
+elif [ "${ARCH}" = "x86_64" ]; then
+  compiler_prefix="${ARCH}-asustor-linux-gnu-"
+fi
+
+export PATH="${tcbindir}:${PATH}"
+export CROSS_COMPILE="${compiler_prefix}"
+
+export CC=${CROSS_COMPILE}gcc
+export LD=${CROSS_COMPILE}ld
+export AR=${CROSS_COMPILE}ar
+export SIZE=${CROSS_COMPILE}size
+export RANLIB=${tcbindir}/${CROSS_COMPILE}ranlib
+
+export PREFIX=${PREFIX:-"/usr/local/AppCentral"}
+export CFLAGS="-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -I${PREFIX}/include -I${SYSROOT}/usr/include --sysroot=${SYSROOT}"
+export LDFLAGS="-s -Wl,--no-undefined -Wl,--as-needed -Wl,-Bsymbolic-functions -Wl,-z,relro -L${PREFIX}/lib -L${SYSROOT}/usr/lib --sysroot=${SYSROOT}"
+export PKG_CONFIG_PATH=${PREFIX}/lib/pkgconfig
+
+[ -x configure ] && ./configure \
+  --host=${ARCH}-asustor-linux-gnu \
+  --target=${ARCH}-asustor-linux-gnu \
+  --build=x86_64-pc-linux-gnu \
+  "$@"
