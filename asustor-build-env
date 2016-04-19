@@ -26,9 +26,3 @@ export PREFIX=${PREFIX:-"/usr/local/AppCentral"}
 export CFLAGS="-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -I${PREFIX}/include -I${SYSROOT}/usr/include --sysroot=${SYSROOT}"
 export LDFLAGS="-s -Wl,--no-undefined -Wl,--as-needed -Wl,-Bsymbolic-functions -Wl,-z,relro -L${PREFIX}/lib -L${SYSROOT}/usr/lib --sysroot=${SYSROOT}"
 export PKG_CONFIG_PATH=${PREFIX}/lib/pkgconfig
-
-[ -x configure ] && ./configure \
-  --host=${ARCH}-asustor-linux-gnu \
-  --target=${ARCH}-asustor-linux-gnu \
-  --build=x86_64-pc-linux-gnu \
-  "$@"
